@@ -36,6 +36,10 @@ Una biblioteca sin firmar en un directorio de trabajo no es una prueba irrefutab
 Hallazgo confirmado
 (Microsoft.Runtime.dll)
 
+# Rastrea la descarga de la carga útil hasta su dirección IP de origen.
+Ahora que hemos identificado la biblioteca maliciosa, analicemos cómo llegó al sistema. El comando que la víctima pegó ejecutó una línea de PowerShell que descargó un script de descarga (l6E.ps1) del servidor del atacante, el cual a su vez descargó e instaló la carga útil l6E.exe. El dominio involucrado fue promptcraft.online. Como analistas del SOC, necesitamos más que un nombre de dominio para poder configurar un bloqueo en el firewall o buscar otros hosts afectado
+
+
 # Registro de Incidente SOC
 ## Información del caso
 - **ID del caso:** SOC-2026-001
