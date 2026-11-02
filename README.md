@@ -9,7 +9,7 @@ ClickFix es una técnica de ingeniería social que se popularizó durante 2024 y
 - **ID del caso:** SOC-2026-001
 - **Fecha:** 30/10/2026
 - **Analista:** Javier Sosa
-- **Plataforma:** SOCSimulator / LetsDefend / TryHackMe (según corresponda)
+- **Plataforma:** SOCSimulator
 - **Severidad:** Alta
 - **Estado:** Escalado a L2
 
