@@ -39,6 +39,17 @@ Hallazgo confirmado
 # Rastrea la descarga de la carga útil hasta su dirección IP de origen.
 Ahora que hemos identificado la biblioteca maliciosa, analicemos cómo llegó al sistema. El comando que la víctima pegó ejecutó una línea de PowerShell que descargó un script de descarga (l6E.ps1) del servidor del atacante, el cual a su vez descargó e instaló la carga útil l6E.exe. El dominio involucrado fue promptcraft.online. Como analistas del SOC, necesitamos más que un nombre de dominio para poder configurar un bloqueo en el firewall o buscar otros hosts afectado
 
+<img width="1277" height="520" alt="Captura de pantalla 2026-11-02 134030" src="https://github.com/user-attachments/assets/fa3f5697-a1ae-4a63-b944-4252488bf55f" />
+
+Los dominios son baratos y desechables. Un operador registra uno nuevo en minutos, y el mismo proveedor de alojamiento puede gestionar fácilmente una docena de ellos, por lo que una lista de bloqueo basada únicamente en nombres de dominio queda obsoleta. La infraestructura es la parte más lenta de la pareja, así que merece la pena el esfuerzo adicional de vincular el nombre con la entidad que lo respalda. Responda con una única dirección IPv4.
+
+Por qué esto es importante
+Bloquear el dominio habría dado la sensación de ser una solución y habría dado aproximadamente un día de margen. La dirección es lo que permite plantear la pregunta realmente importante: qué otros hosts de la red se han comunicado con este dominio y desde cuándo. Esta consulta solo se ejecuta sobre la infraestructura, por lo que convertir un nombre en una dirección es lo primero que se hace con cualquier indicador de entrega, antes de la contención y mucho antes del informe.
+
+¿Cuál es la dirección IP del servidor que alojó la carga útil maliciosa (promptcraft.online)? 
+Hallazgo confirmado
+185.91.69.119
+
 
 # Registro de Incidente SOC
 ## Información del caso
