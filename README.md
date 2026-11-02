@@ -11,12 +11,12 @@ La página le indicaba que presionara Win+R, pegara y pulsara Enter.
 Se ejecutó un comando de PowerShell, descargando una carga útil desde promptcraft.online.
 Nuestro agente XDR ha detectado múltiples procesos sospechosos.
 
-Telemetría del punto final desde el momento de la ejecución
+# Telemetría del punto final desde el momento de la ejecución
 Antes de analizar el malware, veamos qué registró el agente de seguridad mientras Anita estaba en esa página. Dos de estas líneas corresponden a la navegación habitual. Las otras dos corresponden a la transferencia de control: la página interactuando con su equipo y las pulsaciones de teclas que la convirtieron en un proceso en ejecución.
 
 <img width="1277" height="510" alt="Captura de pantalla 2026-11-02 132028" src="https://github.com/user-attachments/assets/4bb03690-97fb-4ef0-84fe-90119b6c6d6a" />
 
-Por qué esto es importante
+# Por qué esto es importante
 Todos los controles de esa estación de trabajo se diseñaron para inspeccionar los elementos que llegan: un archivo adjunto, una descarga, un instalador. ClickFix llega como texto y lo ejecuta el usuario, por lo que no hay nada que esos controles deban evaluar ni poner en cuarentena. El nombre del mecanismo indica dónde debe activarse la detección: en el momento en que aparece una consola iniciada por el usuario debajo del proceso de escritorio, en lugar de en el momento en que un archivo se guarda en el disco.
 
 # Registro de Incidente SOC
