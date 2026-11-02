@@ -49,6 +49,11 @@ Bloquear el dominio habría dado la sensación de ser una solución y habría da
 ¿Cuál es la dirección IP del servidor que alojó la carga útil maliciosa (promptcraft.online)?: 
 185.91.69.119
 
+#Desenmascarar el destino de comando y control
+Excelente trabajo al identificar el origen del malware. Ahora investiguemos qué sucedió después de su instalación. El componente de robo de credenciales, cleanuploader.exe, accedió al almacén de credenciales de Chrome de Anita. Pero, ¿a dónde envió los datos robados? Los atacantes abusan cada vez más de los servicios legítimos en la nube para usarlos como servidor de comando y control (C2) y camuflarse con el tráfico normal.
+
+Cadena de ejecución de procesos
+Primero, examinemos el árbol de procesos de XDR para comprender cómo se relacionan entre sí los componentes del malware. Observe la cadena: powershell.exe inició mshta.exe, que usó regasm.exe para cargar la DLL, la cual finalmente generó el programa de robo de credenciales.
 
 # Registro de Incidente SOC
 ## Información del caso
