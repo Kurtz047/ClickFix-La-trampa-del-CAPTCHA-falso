@@ -23,7 +23,7 @@ Tras la ejecución inicial de PowerShell, nuestro agente XDR registró varias ac
 
 (Los binarios que se ejecutan fuera del entorno (LOLBins), como mshta.exe y regasm.exe, son herramientas legítimas de Windows que los atacantes utilizan indebidamente para ejecutar código malicioso. Dado que son binarios firmados por Microsoft, suelen eludir las listas blancas de aplicaciones y la detección de puntos finales.)
 
-#Artefactos del sistema de archivos XDR
+# Artefactos del sistema de archivos XDR
 Analicemos los archivos registrados en corp-wks-102. Uno de ellos es la DLL maliciosa que cargó regasm.exe. ¿Puedes identificar el archivo de biblioteca sospechoso?
 
 # Registro de Incidente SOC
