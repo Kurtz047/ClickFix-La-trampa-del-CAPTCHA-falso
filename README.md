@@ -33,8 +33,8 @@ El nombre de un archivo es una vulneración que el atacante puede aprovechar. Wi
 Por qué esto es importante
 Una biblioteca sin firmar en un directorio de trabajo no es una prueba irrefutable por sí sola, y tratarla como tal es como los analistas pierden una tarde entera analizando archivos temporales de Office. El juicio que acabas de hacer es el que tiene mayor impacto: un archivo genera sospechas por la combinación de dónde se escribió, quién lo avaló y qué lo cargó. El nombre es el más débil de los tres, porque es la única parte que el atacante controla libremente.
 
-Introduzca el nombre del archivo DLL malicioso que se cargó durante este ataque.
-(Microsoft.Runtime.dll)
+Introduzca el nombre del archivo DLL malicioso que se cargó durante este ataque:
+Microsoft.Runtime.dll
 
 # Rastrea la descarga de la carga útil hasta su dirección IP de origen.
 Ahora que hemos identificado la biblioteca maliciosa, analicemos cómo llegó al sistema. El comando que la víctima pegó ejecutó una línea de PowerShell que descargó un script de descarga (l6E.ps1) del servidor del atacante, el cual a su vez descargó e instaló la carga útil l6E.exe. El dominio involucrado fue promptcraft.online. Como analistas del SOC, necesitamos más que un nombre de dominio para poder configurar un bloqueo en el firewall o buscar otros hosts afectado
@@ -46,7 +46,7 @@ Los dominios son baratos y desechables. Un operador registra uno nuevo en minuto
 Por qué esto es importante
 Bloquear el dominio habría dado la sensación de ser una solución y habría dado aproximadamente un día de margen. La dirección es lo que permite plantear la pregunta realmente importante: qué otros hosts de la red se han comunicado con este dominio y desde cuándo. Esta consulta solo se ejecuta sobre la infraestructura, por lo que convertir un nombre en una dirección es lo primero que se hace con cualquier indicador de entrega, antes de la contención y mucho antes del informe.
 
-¿Cuál es la dirección IP del servidor que alojó la carga útil maliciosa (promptcraft.online)? 
+¿Cuál es la dirección IP del servidor que alojó la carga útil maliciosa (promptcraft.online)?: 
 185.91.69.119
 
 
