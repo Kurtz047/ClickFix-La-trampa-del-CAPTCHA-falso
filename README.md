@@ -64,7 +64,8 @@ Nuevo concepto: TLS SNI. Cuando un programa abre una conexión HTTPS, anuncia, e
 
 <img width="1275" height="445" alt="Captura de pantalla 2026-11-02 152533" src="https://github.com/user-attachments/assets/e83f168c-a2b4-40dc-8da5-f86c57c6847b" />
 
-# La clave de esta técnica reside en pasar desapercibido. Una regla de perímetro que confía en los metadatos de la sesión permitirá este tráfico siempre, y un usuario que revise un registro lleno de sesiones permitidas de Microsoft también lo permitirá. Considere el nombre de host declarado como un campo más entre varios y deje que el resto del registro determine. Responda con una única dirección IPv4.
+# La clave de esta técnica reside en pasar desapercibido. 
+Una regla de perímetro que confía en los metadatos de la sesión permitirá este tráfico siempre, y un usuario que revise un registro lleno de sesiones permitidas de Microsoft también lo permitirá. Considere el nombre de host declarado como un campo más entre varios y deje que el resto del registro determine. Responda con una única dirección IPv4.
 
 Por qué esto es importante
 A los analistas se les enseña a confiar en los campos de nombre de host porque durante años no se creía que contuvieran información falsa. En un punto final comprometido, esta suposición se invierte: el SNI contiene datos proporcionados por el atacante, ubicados en una columna aparentemente confiable, y una detección basada en ellos dejará pasar silenciosamente el tráfico para el que fue diseñada. Un hábito importante a partir de este paso es preguntar, para cada campo sobre el que se vaya a generar una alerta, quién lo escribió realmente.
