@@ -96,53 +96,60 @@ Siguiente paso. Esta guía te mostró cada fragmento en el orden correcto y te i
 
 Aislar corp-wks-102 de la red (aislamiento del host XDR)
 
-
-
 # Registro de Incidente SOC
+
 ## Información del caso
 - **ID del caso:** SOC-2026-001
-- **Fecha:** 30/10/2026
+- **Fecha:** 02/11/2026
 - **Analista:** Javier Sosa
-- **Plataforma:** SOCSimulator
-- **Severidad:** Alta
-- **Estado:** Escalado a L2
+- **Plataforma:** SOCSimulator (sala ClickFix)
+- **Severidad:** Crítica
+- **Estado:** Contenido (aislamiento de host) / Escalado a L2
 
 ## Resumen ejecutivo
-Se detectó un intento de robo de credenciales (credential harvesting) mediante un correo de phishing que redirigía a un formulario de login falso de Microsoft. La usuaria afectada ingresó sus credenciales en el sitio fraudulento. Se identificó el dominio externo que recibió los datos y se recomendó el bloqueo y el reseteo de contraseña.
+La empleada Anita García reportó comportamiento extraño en su estación de trabajo `corp-wks-102` tras visitar un sitio web que le solicitó completar un CAPTCHA falso. Se trató de un ataque **ClickFix**: la página ejecutó un comando de PowerShell en segundo plano y guió a la usuaria a pegarlo y ejecutarlo manualmente (Win+R → Ctrl+V → Enter). El comando descargó un script (`l6E.ps1`) desde `promptcraft.online`, que a su vez instaló la carga útil `l6E.exe`. Mediante LOLBins (`mshta.exe`, `regasm.exe`) se cargó una DLL maliciosa (`Microsoft.Runtime.dll`) desde la carpeta Temp del usuario. Finalmente, `cleanuploader.exe` robó credenciales almacenadas en Chrome y las exfiltró a un servidor C2 externo, camuflando el tráfico con un TLS SNI falsificado de `graph.microsoft.com`. Se identificó además una clave de persistencia en el registro.
 
 ## Alerta inicial
-- **Fuente:** Correo electrónico reportado por el usuario / SIEM / EDR
-- **Descripción:** Correo con enlace a un sitio que imita el login de Microsoft.
-- **Usuario afectado:** anita.garcia 
-- **Workstation:** Estación de trabajo corp-wks-102, IP 10.0.1.135
+- **Fuente:** Reporte de usuario (Recursos Humanos) + alerta del agente XDR
+- **Descripción:** Estación de trabajo con comportamiento anómalo desde la tarde anterior. La usuaria mencionó haber completado una verificación CAPTCHA en un sitio de investigación.
+- **Usuario afectado:** anita.garcia
+- **Workstation:** corp-wks-102 (10.0.1.135)
 
 ## Investigación (L1)
-1. **Análisis del correo:** El remitente utilizaba un dominio lookalike (ej: `micros0ft-support.com`). El enlace redirigía a un primer dominio legítimo comprometido y luego a un segundo dominio falso.
-2. **Análisis de red:** Se revisaron los logs de la workstation de la usuaria. Se identificó una petición **POST** hacia el dominio `login-microsoft-alerta.com` a las 14:32 hs.
-3. **Correlación:** El dominio falso imita la apariencia de Microsoft y recibió las credenciales ingresadas por la usuaria.
+1. **Análisis del vector inicial (ClickFix):** La web `eemmbryequo.shop` (45.147.230.19) simulaba un CAPTCHA y solicitaba ejecutar Win+R, pegar y pulsar Enter. No hubo archivo descargado ni adjunto: el código JavaScript preparó el comando de PowerShell y la propia usuaria lo ejecutó.
+2. **Análisis de procesos (XDR):** Se observó la cadena `powershell.exe` → `mshta.exe` → `regasm.exe`. PowerShell descargó `l6E.ps1` desde `promptcraft.online`, que instaló `l6E.exe`. `regasm.exe` cargó una DLL sin firmar desde la carpeta Temp del usuario en el entorno .NET.
+3. **Análisis de archivos (XDR):** Se identificó la DLL maliciosa **`Microsoft.Runtime.dll`**, cargada desde un directorio de trabajo. El nombre imita una librería legítima, pero el archivo no estaba firmado y fue cargado por `regasm.exe`.
+4. **Análisis de red (Firewall):** `cleanuploader.exe` abrió una conexión saliente para exfiltrar credenciales. Se identificó la IP del servidor de descarga de la carga útil (`promptcraft.online`) y la IP del canal C2/exfiltración, enmascarada con un TLS SNI falsificado de `graph.microsoft.com`.
+5. **Persistencia:** El monitor de registro XDR mostró una clave de ejecución (`Run key`) que reinicia `cleanuploader.exe` al iniciar sesión. Finalizar el proceso no elimina el malware.
 
 ## Evidencia (IOCs)
-- **Dominio falso:** `login-microsoft-alerta.com`
-- **IP del servidor:** 203.0.113.45
-- **Hash del archivo adjunto (si aplica):** `d41d8cd98f00b204e9800998ecf8427e`
-- **URL completa:** `https://login-microsoft-alerta.com/auth/login`
-- **Timestamp del POST:** 2026-10-30 14:32:10 UTC
+- **Sitio del CAPTCHA falso:** `eemmbryequo.shop` — IP: `45.147.230.19`
+- **Dominio de descarga de la carga útil:** `promptcraft.online` — IP: `185.91.69.119`
+- **Script descargador:** `l6E.ps1`
+- **Carga útil:** `l6E.exe`
+- **DLL maliciosa cargada:** `Microsoft.Runtime.dll`
+- **Proceso de robo de credenciales:** `cleanuploader.exe`
+- **LOLBins utilizados:** `mshta.exe`, `regasm.exe`
+- **IP del canal C2 / exfiltración:** `185.147.124.40`
+- **TLS SNI falsificado:** `graph.microsoft.com`
+- **Persistencia:** Clave de ejecución en registro que reinicia `cleanuploader.exe`
 
 ## Acciones tomadas
-- Se documentó el caso con línea de tiempo y evidencia.
-- Se escaló a L2 por tratarse de credenciales comprometidas.
-- Se recomendó:
-  - Bloquear el dominio `login-microsoft-alerta.com` en el proxy/firewall.
-  - Forzar reseteo de contraseña de la usuaria afectada.
-  - Revisar si otros usuarios accedieron al mismo dominio.
+- Se documentó la cadena de ataque completa con evidencia y línea de tiempo.
+- Se identificaron los IOCs de red y de host para bloqueo y búsqueda.
+- Se **aisló el host `corp-wks-102` de la red** mediante aislamiento XDR como primera acción de contención.
+- Se escaló a L2 para investigación profunda y erradicación de la persistencia.
 
 ## Lecciones aprendidas / Notas para el equipo
-- El correo evadió el filtro de spam porque el primer salto era un dominio legítimo comprometido.
-- Se sugiere capacitación al usuario sobre verificación de dominios en enlaces.
-- Se recomienda agregar el dominio falso a la lista de bloqueo de correo.
+- **ClickFix no deja archivos que el navegador pueda bloquear**: la detección debe activarse cuando aparece una consola iniciada por el usuario debajo del proceso de escritorio, no cuando se guarda un archivo en disco.
+- **Los nombres de archivo no son evidencia suficiente**: la sospecha surge de la combinación de dónde se escribió el archivo, quién lo firmó y qué proceso lo cargó. El nombre es lo único que el atacante controla libremente.
+- **No confiar en el SNI**: en un endpoint comprometido, el SNI es un dato proporcionado por el atacante. Un firewall que confía en los metadatos de la sesión permitirá el tráfico siempre.
+- Se recomienda capacitación a usuarios sobre técnicas de ingeniería social que piden ejecutar comandos o atajos de teclado.
+- Se recomienda agregar los dominios e IPs identificados a las listas de bloqueo y buscar otros hosts que hayan comunicado con ellos.
 
 ## Clasificación final
-- **Tipo de incidente:** Phishing / Credential Harvesting
-- **MITRE ATT&CK:** T1566 (Phishing), T1078 (Valid Accounts)
+- **Tipo de incidente:** ClickFix / Ingeniería social / Ejecución de código / Robo de credenciales / Exfiltración
+- **MITRE ATT&CK:** T1204 (User Execution), T1059.001 (PowerShell), T1218 (System Binary Proxy Execution), T1555.003 (Credentials from Web Browsers), T1547.001 (Registry Run Keys), T1071 (Application Layer Protocol)
 - **Confianza:** Alta
-- **Escalado a:** L2 (Investigación profunda)
+- **Escalado a:** L2 (Investigación profunda y erradicación)
+
