@@ -113,8 +113,8 @@ Se detectó un intento de robo de credenciales (credential harvesting) mediante 
 ## Alerta inicial
 - **Fuente:** Correo electrónico reportado por el usuario / SIEM / EDR
 - **Descripción:** Correo con enlace a un sitio que imita el login de Microsoft.
-- **Usuario afectado:** alicia.gomez@empresa.com
-- **Workstation:** WS-ALICIA-01 (192.168.1.45)
+- **Usuario afectado:** anita.garcia 
+- **Workstation:** Estación de trabajo corp-wks-102, IP 10.0.1.135
 
 ## Investigación (L1)
 1. **Análisis del correo:** El remitente utilizaba un dominio lookalike (ej: `micros0ft-support.com`). El enlace redirigía a un primer dominio legítimo comprometido y luego a un segundo dominio falso.
