@@ -11,6 +11,8 @@ La página le indicaba que presionara Win+R, pegara y pulsara Enter.
 Se ejecutó un comando de PowerShell, descargando una carga útil desde promptcraft.online.
 Nuestro agente XDR ha detectado múltiples procesos sospechosos.
 
+<img width="1277" height="510" alt="Captura de pantalla 2026-11-02 132028" src="https://github.com/user-attachments/assets/4bb03690-97fb-4ef0-84fe-90119b6c6d6a" />
+
 # Registro de Incidente SOC
 ## Información del caso
 - **ID del caso:** SOC-2026-001
