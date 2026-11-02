@@ -49,11 +49,29 @@ Bloquear el dominio habría dado la sensación de ser una solución y habría da
 ¿Cuál es la dirección IP del servidor que alojó la carga útil maliciosa (promptcraft.online)?: 
 185.91.69.119
 
-#Desenmascarar el destino de comando y control
+# Desenmascarar el destino de comando y control
 Excelente trabajo al identificar el origen del malware. Ahora investiguemos qué sucedió después de su instalación. El componente de robo de credenciales, cleanuploader.exe, accedió al almacén de credenciales de Chrome de Anita. Pero, ¿a dónde envió los datos robados? Los atacantes abusan cada vez más de los servicios legítimos en la nube para usarlos como servidor de comando y control (C2) y camuflarse con el tráfico normal.
 
 Cadena de ejecución de procesos
 Primero, examinemos el árbol de procesos de XDR para comprender cómo se relacionan entre sí los componentes del malware. Observe la cadena: powershell.exe inició mshta.exe, que usó regasm.exe para cargar la DLL, la cual finalmente generó el programa de robo de credenciales.
+
+<img width="1275" height="569" alt="Captura de pantalla 2026-11-02 152052" src="https://github.com/user-attachments/assets/d5b4b6dd-63e8-425c-9e61-fa07815304d7" />
+
+# Comunicación C2
+Ahora examine los registros del firewall. El proceso cleanuploader.exe abrió una conexión saliente para transferir las credenciales robadas fuera del equipo. Todas las sesiones en este registro estaban permitidas por la política, y una de ellas corresponde a ese canal.
+
+Nuevo concepto: TLS SNI. Cuando un programa abre una conexión HTTPS, anuncia, en texto plano antes de que comience el cifrado, el nombre de host al que desea conectarse. Este anuncio es la Indicación de Nombre de Servidor (SNI), y el firewall lo registra en el log. No se realiza ninguna validación. El cliente simplemente indica un nombre, por lo que el nombre en los registros es una declaración del software que abrió la sesión, lo que en un host comprometido significa una declaración del atacante. Todos los demás campos de esa fila provienen de la conexión en sí, no del cliente.
+
+<img width="1275" height="445" alt="Captura de pantalla 2026-11-02 152533" src="https://github.com/user-attachments/assets/e83f168c-a2b4-40dc-8da5-f86c57c6847b" />
+
+# La clave de esta técnica reside en pasar desapercibido. Una regla de perímetro que confía en los metadatos de la sesión permitirá este tráfico siempre, y un usuario que revise un registro lleno de sesiones permitidas de Microsoft también lo permitirá. Considere el nombre de host declarado como un campo más entre varios y deje que el resto del registro determine. Responda con una única dirección IPv4.
+
+Por qué esto es importante
+A los analistas se les enseña a confiar en los campos de nombre de host porque durante años no se creía que contuvieran información falsa. En un punto final comprometido, esta suposición se invierte: el SNI contiene datos proporcionados por el atacante, ubicados en una columna aparentemente confiable, y una detección basada en ellos dejará pasar silenciosamente el tráfico para el que fue diseñada. Un hábito importante a partir de este paso es preguntar, para cada campo sobre el que se vaya a generar una alerta, quién lo escribió realmente.
+
+¿Cuál es la dirección IP utilizada para la comunicación de comando y control y la exfiltración de credenciales?:
+185.147.124.40
+
 
 # Registro de Incidente SOC
 ## Información del caso
