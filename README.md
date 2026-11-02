@@ -64,14 +64,38 @@ Nuevo concepto: TLS SNI. Cuando un programa abre una conexión HTTPS, anuncia, e
 
 <img width="1275" height="445" alt="Captura de pantalla 2026-11-02 152533" src="https://github.com/user-attachments/assets/e83f168c-a2b4-40dc-8da5-f86c57c6847b" />
 
-# La clave de esta técnica reside en pasar desapercibido. 
-Una regla de perímetro que confía en los metadatos de la sesión permitirá este tráfico siempre, y un usuario que revise un registro lleno de sesiones permitidas de Microsoft también lo permitirá. Considere el nombre de host declarado como un campo más entre varios y deje que el resto del registro determine. Responda con una única dirección IPv4.
+# Por qué esto es importante
+La clave de esta técnica reside en pasar desapercibido. Una regla de perímetro que confía en los metadatos de la sesión permitirá este tráfico siempre, y un usuario que revise un registro lleno de sesiones permitidas de Microsoft también lo permitirá. Considere el nombre de host declarado como un campo más entre varios y deje que el resto del registro determine. Responda con una única dirección IPv4.
 
-Por qué esto es importante
 A los analistas se les enseña a confiar en los campos de nombre de host porque durante años no se creía que contuvieran información falsa. En un punto final comprometido, esta suposición se invierte: el SNI contiene datos proporcionados por el atacante, ubicados en una columna aparentemente confiable, y una detección basada en ellos dejará pasar silenciosamente el tráfico para el que fue diseñada. Un hábito importante a partir de este paso es preguntar, para cada campo sobre el que se vaya a generar una alerta, quién lo escribió realmente.
 
 ¿Cuál es la dirección IP utilizada para la comunicación de comando y control y la exfiltración de credenciales?:
 185.147.124.40
+
+# Contención y lecciones aprendidas
+Excelente trabajo. Has rastreado toda la cadena de ataque de ClickFix. Antes de tomar medidas correctivas, revisa lo sucedido y luego toma la decisión de contención.
+
+Resumen de la cadena de ataque
+Anita Garcia visitó eemmbryequo.shop (45.147.230.19), que mostraba una página CAPTCHA falsa.
+La página ejecutó un comando malicioso de PowerShell en su máquina y le indicó que presionara Win+R, pegara y presionara Enter (ClickFix).
+PowerShell obtuvo el descargador y colocó l6E.exe desde promptcraft.online; luego mshta.exe lo ejecutó y regasm.exe cargó una biblioteca sin firmar desde la carpeta Temp del usuario al entorno de ejecución de .NET.
+cleanuploader.exe leyó los datos de inicio de sesión de Chrome (credenciales guardadas) y los extrajo a la dirección externa que usted identificó, disfrazados con un TLS SNI graph.microsoft.com falsificado.
+Un hallazgo más: la persistencia.
+Antes de decidir cómo contenerlo, compruebe si el malware puede sobrevivir a un reinicio. El monitor de registro XDR registró lo siguiente:
+
+<img width="1275" height="492" alt="Captura de pantalla 2026-11-02 153247" src="https://github.com/user-attachments/assets/c61dfffd-b7ac-42c2-a112-5e9711b03950" />
+
+Esta es una clave de ejecución: cleanuploader.exe se reiniciará al iniciar sesión nuevamente. Finalizar el proceso no eliminará el malware, y el canal que rastreaste aún está activo.
+Decisión de contención
+La estación de trabajo sigue en línea con un canal C2/de exfiltración activo y una clave de persistencia. Elija su PRIMERA acción de contención.
+
+# Por qué esto es importante
+La orden de contención es la parte de la respuesta a incidentes que se decide bajo presión y se recuerda posteriormente. Cada opción es defendible por sí misma, y ​​lo que las diferencia es lo que permanece posible una vez que se ha actuado. Elegir mal en este punto rara vez parece un error en el momento, porque el síntoma molesto desaparece de todos modos. Se manifiesta una semana después, cuando la máquina vuelve a estar conectada a la red con la misma clave aún en el registro.
+
+Siguiente paso. Esta guía te mostró cada fragmento en el orden correcto y te indicó cuándo leerlo. Para seguir la misma cadena sin esas indicaciones, abre la operación «Oculto en los píxeles: Extracción de esteganografía LSB desde un punto final infectado». Se abre en una página de verificación similar y con la misma ejecución de copiar y pegar, te proporciona el panel de datos completo para que lo busques tú mismo y no te ordena nada. Tiene un nivel de dificultad superior al de esta sala y sigue el rastro de los datos robados más allá de lo que hacemos aquí.
+
+Aislar corp-wks-102 de la red (aislamiento del host XDR)
+
 
 
 # Registro de Incidente SOC
