@@ -26,6 +26,16 @@ Tras la ejecución inicial de PowerShell, nuestro agente XDR registró varias ac
 # Artefactos del sistema de archivos XDR
 Analicemos los archivos registrados en corp-wks-102. Uno de ellos es la DLL maliciosa que cargó regasm.exe. ¿Puedes identificar el archivo de biblioteca sospechoso?
 
+<img width="1279" height="516" alt="Captura de pantalla 2026-11-02 133308" src="https://github.com/user-attachments/assets/37950626-a8b0-4edb-8cec-1c9f4872bec7" />
+
+El nombre de un archivo es una vulneración que el atacante puede aprovechar. Windows cargará una biblioteca con cualquier nombre, y uno que parezca familiar no le cuesta nada al atacante. La clave para resolver esto reside en lo que el agente del punto final registró de forma independiente sobre cada archivo, en lugar del nombre que el archivo mismo da. Introduzca el nombre del archivo exactamente como aparece en el registro XDR.
+
+Por qué esto es importante
+Una biblioteca sin firmar en un directorio de trabajo no es una prueba irrefutable por sí sola, y tratarla como tal es como los analistas pierden una tarde entera analizando archivos temporales de Office. El juicio que acabas de hacer es el que tiene mayor impacto: un archivo genera sospechas por la combinación de dónde se escribió, quién lo avaló y qué lo cargó. El nombre es el más débil de los tres, porque es la única parte que el atacante controla libremente.
+
+Hallazgo confirmado
+(Microsoft.Runtime.dll)
+
 # Registro de Incidente SOC
 ## Información del caso
 - **ID del caso:** SOC-2026-001
