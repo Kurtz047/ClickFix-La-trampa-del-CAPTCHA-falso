@@ -1,9 +1,10 @@
 # ClickFix-La-trampa-del-CAPTCHA-falso
 Bienvenidos al SOC. Hemos recibido una solicitud urgente de Recursos Humanos: la empleada Anita García informa que su estación de trabajo corp-wks-102 ha estado presentando un comportamiento extraño desde ayer por la tarde. Menciona haber visitado un sitio web de investigación que le solicitó completar una verificación CAPTCHA. 
-# Registro de Incidente SOC
 
 # ¿Qué es ClickFix?
 ClickFix es una técnica de ingeniería social que se popularizó durante 2024 y 2025. El atacante crea una página que simula un CAPTCHA o un paso de verificación rutinario y le pide al visitante que realice una breve secuencia de teclas: Win+R, luego Ctrl+V y finalmente Enter. No se ofrece ningún archivo ni se descarga nada, por lo que no hay ningún archivo adjunto que analizar ni ningún ejecutable que el navegador pueda bloquear. El código JavaScript de la página prepara en segundo plano un comando de PowerShell proporcionado por el atacante, y las teclas que pulsa el visitante son las que lo ejecutan.
+
+# Registro de Incidente SOC
 ## Información del caso
 - **ID del caso:** SOC-2026-001
 - **Fecha:** 30/10/2026
