@@ -21,7 +21,7 @@ Todos los controles de esa estación de trabajo se diseñaron para inspeccionar 
 
 Tras la ejecución inicial de PowerShell, nuestro agente XDR registró varias actividades del sistema de archivos en la estación de trabajo de Anita. La línea de código de PowerShell copiada extrajo un pequeño script de descarga (l6E.ps1) del servidor del atacante, que a su vez obtuvo y descargó la carga útil l6E.exe. Posteriormente, mshta.exe (una utilidad legítima de Windows que suele ser utilizada indebidamente por los atacantes) la ejecutó, y regasm.exe se utilizó para cargar una DLL maliciosa en la memoria
 
-## Los binarios que se ejecutan fuera del entorno (LOLBins), como mshta.exe y regasm.exe, son herramientas legítimas de Windows que los atacantes utilizan indebidamente para ejecutar código malicioso. Dado que son binarios firmados por Microsoft, suelen eludir las listas blancas de aplicaciones y la detección de puntos finales.
+(Los binarios que se ejecutan fuera del entorno (LOLBins), como mshta.exe y regasm.exe, son herramientas legítimas de Windows que los atacantes utilizan indebidamente para ejecutar código malicioso. Dado que son binarios firmados por Microsoft, suelen eludir las listas blancas de aplicaciones y la detección de puntos finales.)
 
 #Artefactos del sistema de archivos XDR
 Analicemos los archivos registrados en corp-wks-102. Uno de ellos es la DLL maliciosa que cargó regasm.exe. ¿Puedes identificar el archivo de biblioteca sospechoso?
